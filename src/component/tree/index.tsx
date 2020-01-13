@@ -1,22 +1,19 @@
 import * as React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native-web";
-import { data } from "../constant";
+import { Image, Text, TouchableOpacity, View } from "react-native-web";
+import { ITreeData } from "src/types";
+import styles from "./styles";
 
-const styles = StyleSheet.create({
-  icon: {
-    width: 10,
-    height: 10,
-    margin: 10,
-  },
-  childrenNode: { paddingLeft: 30 },
-});
+interface ITreeProps {
+  data: ITreeData[]
+}
 
-const Tree: any = () => {
+const Tree: any = (props: ITreeProps) => {
+  const { data } = props;
   const [collapsed, setCollapsed] = React.useState<any>({});
 
-  const hasChild = (node: any) => Boolean(node.child);
+  const hasChild = (node: ITreeData) => Boolean(node.child);
 
-  const handleCollapse = (type: any, key: any) => () => {
+  const handleCollapse = (type: string, key: number) => () => {
     let tmpState = collapsed;
     tmpState = {
       ...tmpState,
@@ -25,7 +22,7 @@ const Tree: any = () => {
     setCollapsed(tmpState);
   };
 
-  const displayNode = (node: any, type: string, key: Number) => {
+  const displayNode = (node: ITreeData, type: string, key: number) => {
     let icon = collapsed[type + key]
       ? require("src/asset/left.png")
       : require("src/asset/down.png");
@@ -38,7 +35,7 @@ const Tree: any = () => {
     );
   };
 
-  const getEachNode = (node: any, key: number, type: string) => (
+  const getEachNode = (node: ITreeData, key: number, type: string) => (
     <View key={key}>
       <TouchableOpacity onPress={handleCollapse(type, key)}>
         {displayNode(node, type, key)}
@@ -51,9 +48,9 @@ const Tree: any = () => {
     </View>
   );
 
-  const createTree = (type: string, data: any) => {
-    const nodes: any = [];
-    data.forEach((eachData: any, eachKey: number) => {
+  const createTree = (type: string, data: ITreeData[]) => {
+    const nodes: React.ReactElement[] = [];
+    data.forEach((eachData: ITreeData, eachKey: number) => {
       nodes.push(getEachNode(eachData, eachKey, type));
     });
     return nodes;
